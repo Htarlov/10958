@@ -1,6 +1,7 @@
-var elements = ['','*','+','-','/','**','**-','/-','*-'] // operators, ** means ^
-var felements = ['', '-'] // operators before first element
-var target = 10958.0
+const elements = ['','*','+','-','/','**','**-','/-','*-']; // operators, ** means ^
+const felements = ['', '-']; // operators before first element
+const target = 10958.0;
+const show_all = false; // to debug
 
 var best_str = '0';
 var best_delta = 1*target;
@@ -38,13 +39,16 @@ function check (level, str, onum, opens, just_opened) {
            best_str = str;
            best_delta = delta;
            best_value = v;
-           console.log('New best value '+v+' for equation '+str+' delta '+delta)
+           console.log('New best value '+v+' for equation '+str+' delta '+delta);
         }
         count++;
         if (count % 10000000 == 0) {
           console.log('Checked '+count+' possibilities. Last checked: '+str);
           console.log('Best so far: '+best_str+' with value: '+best_value+' and delta: '+best_delta);
-        } 
+        }
+        if (show_all) {
+          console.log('Current: '+str+' value '+v+' delta: '+delta);
+        }
         return;
     }
     // run when level < 10
@@ -59,20 +63,30 @@ function check (level, str, onum, opens, just_opened) {
         var max_st = 0; // maximal number of starting brackets (might be changed below)
         var min_en = 0; // minimal number of ending brackets
         var max_en = 0; // maximal number of ending brackets (might be changed below)
+        var same_num = 0;
+        var prev = -1;
+        for (var k=0; k<onum; k++) {
+          if (opens[k] == prev) same_num++;
+          prev = opens[k];
+        }
         if (level == 1 || e != '') { // do not open on concatenations
           // we do not want to open more than we can reasonably close without ...((...))...
-          max_st = 9 - level - onum; 
+          max_st = 9 - level - same_num;
+          if (max_st < 1 && level < 9) max_st = 1; 
         }
-        if (max_st < 0) {
-          // might be negative if those opened were not closed
-          min_en = 0-max_st;
-          max_st = 0;
+
+        if (same_num >= 10-level) { // should close at least one pair so we won't end up with ...((...))
+          prev = -1;
+          for (var k=0; k<onum; k++) {
+            if (opens[k] == prev) break;
+            min_en++;
+          }
         }
 
         if (!just_opened && onum > 0 && e != '') {
             // does not close if just opened, no sense of that
             // also does not close if current operator is concatenation
-            var prev = level-1
+            prev = level-1
             for (var k=0; k<onum; k++) {
                 if (opens[k] == prev) break;
                 max_en++;
