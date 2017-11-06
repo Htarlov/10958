@@ -121,11 +121,11 @@ function check (level, equation, onum, opens, just_opened) {
 
         for (var n_st=0; n_st<=max_st; n_st++) { 
           // iterate through possible numbers of starting brackets
-          st_brackets = '';
           var max_m = (n_st > 1 || level == 1) ? 1 : 0; // 1 means that can add additional negation before brackets
           // add negation only on second bracket as for first it is already 
           // checked (operators '*-' etc.) except for starting entry where always allowed so cound have -(...
           for (var m=0; m <= max_m; m++) { // 0 - no negation, 1 - negation
+            st_brackets = '';
             if (n_st > 0) for (a = 0; a<n_st; a++) st_brackets += m == 0 ? '(' : '-(';
             for (var n_en=min_en; n_en <= max_en; n_en++) { // iterate all possible numbers of ending brackets
                 en_brackets = '';
